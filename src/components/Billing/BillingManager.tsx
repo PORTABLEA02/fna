@@ -40,7 +40,7 @@ export function BillingManager() {
   const handleSaveInvoice = (invoiceData: Partial<Invoice>) => {
     const saveInvoice = async () => {
       try {
-        const { items, consultationType, invoice_type, ...rest } = invoiceData as any;
+        const { items, ...rest } = invoiceData as any;
         
         // Construire les données de facture avec seulement les colonnes valides de la base de données
         const invoiceForDb = {
@@ -51,7 +51,7 @@ export function BillingManager() {
           status: rest.status,
           tax: rest.tax || 0,
           appointment_id: rest.appointment_id,
-          invoice_type: invoice_type || 'ordinary'
+          invoice_type: rest.invoice_type || 'ordinary'
         };
         
         let savedInvoice;
@@ -59,19 +59,6 @@ export function BillingManager() {
           savedInvoice = await InvoiceService.update(editingInvoice.id, invoiceForDb);
         } else {
           savedInvoice = await InvoiceService.create(invoiceForDb, items || []);
-          
-          // Créer automatiquement un workflow de consultation si c'est une nouvelle facture
-          if (savedInvoice && consultationType) {
-            console.log('🔍 BillingManager.handleSaveInvoice() - Création du workflow de consultation');
-            await ConsultationWorkflowService.create({
-              patient_id: savedInvoice.patient_id,
-              invoice_id: savedInvoice.id,
-              consultation_type: consultationType,
-              status: 'payment-pending',
-              created_by: savedInvoice.created_by || ''
-            });
-            console.log('✅ BillingManager.handleSaveInvoice() - Workflow de consultation créé');
-          }
         }
         
         setShowInvoiceForm(false);
@@ -100,10 +87,7 @@ export function BillingManager() {
         // Mettre à jour le workflow si la facture est entièrement payée
         if (paymentData.amount >= paymentData.invoiceTotal) {
           console.log('🔍 BillingManager.handleSavePayment() - Facture entièrement payée, mise à jour du workflow');
-          const workflow = await ConsultationWorkflowService.getByInvoiceId(paymentData.invoiceId);
-          if (workflow) {
-            await ConsultationWorkflowService.update(workflow.id, { status: 'vitals-pending' });
-          }
+          // Le workflow sera créé automatiquement par le trigger de la base de données
         }
         
         setShowPaymentForm(false);

@@ -72,8 +72,8 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
   // Types de factures disponibles
   const INVOICE_TYPES = [
     { value: 'ordinary', label: 'Ordinaire' },
-    { value: 'general', label: 'Consultation générale' },
-    { value: 'gynecology', label: 'Consultation gynécologique' }
+    { value: 'general-consultation', label: 'Consultation générale' },
+    { value: 'gynecological-consultation', label: 'Consultation gynécologique' }
   ];
 
   React.useEffect(() => {
@@ -110,19 +110,11 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
     const total = subtotal + (formData.tax || 0);
     
-    // Déterminer le type de consultation basé sur les services facturés
-    const consultationType = items.some(item => 
-      item.description.toLowerCase().includes('spécialisée') || 
-      item.description.toLowerCase().includes('cardiologique') ||
-      item.description.toLowerCase().includes('pédiatrique')
-    ) ? 'specialist' : 'general';
-    
     onSave({
       ...formData,
       items: items,
       subtotal,
       total,
-      consultationType,
       invoice_type: formData.invoice_type
     });
   };

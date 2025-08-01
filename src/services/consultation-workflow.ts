@@ -32,6 +32,12 @@ export class ConsultationWorkflowService {
   // Mettre à jour un workflow
   static async update(id: string, updates: ConsultationWorkflowUpdate): Promise<ConsultationWorkflow> {
     console.log('🔍 ConsultationWorkflowService.update() - Mise à jour du workflow ID:', id, 'avec:', updates);
+    
+    // Si on met à jour avec des constantes vitales, passer au statut suivant
+    if (updates.vital_signs_id && !updates.status) {
+      updates.status = 'vitals-pending';
+    }
+    
     const { data, error } = await supabase
       .from('consultation_workflows')
       .update({
@@ -185,6 +191,7 @@ export class ConsultationWorkflowService {
       .select(`
         *,
         patient:patients(first_name, last_name, phone),
+        doctor:profiles!doctor_id(first_name, last_name, speciality),
         vital_signs:vital_signs(*)
       `)
       .eq('invoice_id', invoiceId)
@@ -197,5 +204,24 @@ export class ConsultationWorkflowService {
 
     console.log('✅ ConsultationWorkflowService.getByInvoiceId() - Workflow récupéré:', data ? data.id : 'aucun');
     return data || null;
+  }
+
+  // Vérifier si un workflow existe pour une facture
+  static async existsForInvoice(invoiceId: string): Promise<boolean> {
+    console.log('🔍 ConsultationWorkflowService.existsForInvoice() - Vérification de l\'existence d\'un workflow pour la facture:', invoiceId);
+    const { data, error } = await supabase
+      .from('consultation_workflows')
+      .select('id')
+      .eq('invoice_id', invoiceId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('❌ ConsultationWorkflowService.existsForInvoice() - Erreur lors de la vérification:', error);
+      return false;
+    }
+
+    const exists = !!data;
+    console.log('✅ ConsultationWorkflowService.existsForInvoice() - Workflow existe:', exists);
+    return exists;
   }
 }

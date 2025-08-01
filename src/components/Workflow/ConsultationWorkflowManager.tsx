@@ -75,9 +75,10 @@ export function ConsultationWorkflowManager() {
       });
 
       // Mettre à jour le workflow
+      const nextStatus = selectedWorkflow.doctor_id ? 'consultation-ready' : 'doctor-assignment';
       await ConsultationWorkflowService.update(selectedWorkflow.id, {
         vital_signs_id: vitalSigns.id,
-        status: 'doctor-assignment'
+        status: nextStatus
       });
 
       console.log('✅ ConsultationWorkflowManager.handleSaveVitalSigns() - Constantes vitales sauvegardées et workflow mis à jour');
@@ -180,7 +181,7 @@ export function ConsultationWorkflowManager() {
   const filteredWorkflows = workflows.filter(workflow => {
     switch (activeTab) {
       case 'pending':
-        return ['payment-completed', 'vitals-pending', 'doctor-assignment'].includes(workflow.status);
+        return ['payment-completed', 'vitals-pending'].includes(workflow.status);
       case 'ready':
         return workflow.status === 'consultation-ready';
       case 'progress':
@@ -195,7 +196,7 @@ export function ConsultationWorkflowManager() {
   const getTabCount = (tab: string) => {
     switch (tab) {
       case 'pending':
-        return workflows.filter(w => ['payment-completed', 'vitals-pending', 'doctor-assignment'].includes(w.status)).length;
+        return workflows.filter(w => ['payment-completed', 'vitals-pending'].includes(w.status)).length;
       case 'ready':
         return workflows.filter(w => w.status === 'consultation-ready').length;
       case 'progress':
@@ -352,13 +353,20 @@ export function ConsultationWorkflowManager() {
                         </div>
                         <div>
                           <span className="text-gray-500">Médecin assigné:</span>
-                          <p className="font-medium text-gray-900">{getDoctorName(workflow.doctor_id || undefined)}</p>
+                          <p className="font-medium text-gray-900">
+                            {workflow.doctor_id ? getDoctorName(workflow.doctor_id) : 'Attribution automatique'}
+                          </p>
+                          {workflow.doctor && (
+                            <p className="text-xs text-gray-500">
+                              Spécialité: {workflow.doctor.speciality}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="flex space-x-2 ml-4">
-                      {workflow.status === 'payment-completed' && (
+                      {workflow.status === 'payment-completed' && !workflow.vital_signs_id && (
                         <button
                           onClick={() => handleTakeVitalSigns(workflow)}
                           className="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700 transition-colors flex items-center space-x-1"
@@ -368,7 +376,7 @@ export function ConsultationWorkflowManager() {
                         </button>
                       )}
                       
-                      {workflow.status === 'doctor-assignment' && (
+                      {workflow.status === 'vitals-pending' && !workflow.doctor_id && (
                         <button
                           onClick={() => handleAssignDoctor(workflow)}
                           className="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors flex items-center space-x-1"
@@ -391,11 +399,16 @@ export function ConsultationWorkflowManager() {
                 {activeTab === 'completed' && <Users className="h-8 w-8 text-gray-400" />}
               </div>
               <p className="text-gray-500">
-                {activeTab === 'pending' && 'Aucune consultation en attente'}
+                {activeTab === 'pending' && 'Aucune consultation en attente de prise en charge'}
                 {activeTab === 'ready' && 'Aucune consultation prête'}
                 {activeTab === 'progress' && 'Aucune consultation en cours'}
                 {activeTab === 'completed' && 'Aucune consultation terminée aujourd\'hui'}
               </p>
+              {activeTab === 'pending' && (
+                <p className="text-sm text-gray-400 mt-2">
+                  Les workflows sont créés automatiquement lors du paiement des factures de consultation
+                </p>
+              )}
             </div>
           )}
         </div>
