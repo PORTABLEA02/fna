@@ -72,8 +72,8 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
   // Types de factures disponibles
   const INVOICE_TYPES = [
     { value: 'ordinary', label: 'Ordinaire' },
-    { value: 'general-consultation', label: 'Consultation générale' },
-    { value: 'gynecological-consultation', label: 'Consultation gynécologique' }
+    { value: 'general', label: 'Consultation générale' },
+    { value: 'gynecology', label: 'Consultation gynécologique' }
   ];
 
   React.useEffect(() => {
@@ -123,7 +123,7 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
       subtotal,
       total,
       consultationType,
-      invoiceType: formData.invoice_type
+      invoice_type: formData.invoice_type
     });
   };
 

@@ -202,6 +202,15 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
     return method ? labels[method as keyof typeof labels] || method : '';
   };
 
+  const getInvoiceTypeLabel = (type?: string) => {
+    const labels = {
+      'ordinary': 'Ordinaire',
+      'general-consultation': 'Consultation générale',
+      'gynecological-consultation': 'Consultation gynécologique'
+    };
+    return type ? labels[type as keyof typeof labels] || type : 'Ordinaire';
+  };
+
   const totalAmount = filteredInvoices.reduce((sum, invoice) => sum + invoice.total, 0);
   const paidAmount = filteredInvoices.filter(i => i.status === 'paid').reduce((sum, invoice) => sum + invoice.total, 0);
   const pendingAmount = filteredInvoices.filter(i => i.status === 'pending').reduce((sum, invoice) => sum + invoice.total, 0);
@@ -335,6 +344,9 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
                 Facture
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Patient
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -368,6 +380,11 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
                         </div>
                       )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">
+                      {getInvoiceTypeLabel(invoice.invoice_type)}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">

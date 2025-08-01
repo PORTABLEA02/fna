@@ -73,6 +73,15 @@ export function InvoiceDetail({ invoice, onClose, onEdit, onPay }: InvoiceDetail
     return method ? labels[method as keyof typeof labels] || method : '';
   };
 
+  const getInvoiceTypeLabel = (type?: string) => {
+    const labels = {
+      'ordinary': 'Ordinaire',
+      'general-consultation': 'Consultation générale',
+      'gynecological-consultation': 'Consultation gynécologique'
+    };
+    return type ? labels[type as keyof typeof labels] || type : 'Ordinaire';
+  };
+
   const handlePrint = () => {
     // Créer le contenu d'impression
     const printContent = generatePrintContent();
@@ -329,6 +338,9 @@ export function InvoiceDetail({ invoice, onClose, onEdit, onPay }: InvoiceDetail
                 <span class="info-label">Date d'émission:</span> ${new Date(invoice.date).toLocaleDateString('fr-FR')}
               </div>
               <div class="info-item">
+                <span class="info-label">Type de facture:</span> ${getInvoiceTypeLabel(invoice.invoice_type)}
+              </div>
+              <div class="info-item">
                 <span class="info-label">Statut:</span> 
                 <span class="status-badge status-${invoice.status}">${getStatusLabel(invoice.status)}</span>
               </div>
@@ -490,6 +502,10 @@ export function InvoiceDetail({ invoice, onClose, onEdit, onPay }: InvoiceDetail
                 <div>
                   <span className="text-sm font-medium text-gray-700">Date d'émission:</span>
                   <p className="text-gray-900">{new Date(invoice.date).toLocaleDateString('fr-FR')}</p>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-700">Type de facture:</span>
+                  <p className="text-gray-900">{getInvoiceTypeLabel(invoice.invoice_type)}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700">Statut:</span>

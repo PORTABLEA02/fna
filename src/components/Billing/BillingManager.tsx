@@ -40,7 +40,7 @@ export function BillingManager() {
   const handleSaveInvoice = (invoiceData: Partial<Invoice>) => {
     const saveInvoice = async () => {
       try {
-        const { items, consultationType, ...rest } = invoiceData as any;
+        const { items, consultationType, invoice_type, ...rest } = invoiceData as any;
         
         // Construire les données de facture avec seulement les colonnes valides de la base de données
         const invoiceForDb = {
@@ -50,7 +50,8 @@ export function BillingManager() {
           total: rest.total,
           status: rest.status,
           tax: rest.tax || 0,
-          appointment_id: rest.appointment_id
+          appointment_id: rest.appointment_id,
+          invoice_type: invoice_type || 'ordinary'
         };
         
         let savedInvoice;

@@ -76,6 +76,7 @@ export class InvoiceService {
       .insert({
         ...invoiceData,
         id: invoiceId,
+        invoice_type: invoiceData.invoice_type || 'ordinary',
         created_by: user?.id
       })
       .select()

@@ -340,6 +340,7 @@ export interface Database {
           status: 'pending' | 'paid' | 'overdue'
           payment_method: 'cash' | 'card' | 'mobile-money' | 'bank-transfer' | 'check' | null
           paid_at: string | null
+          invoice_type: 'ordinary' | 'general-consultation' | 'gynecological-consultation'
           created_at: string
           updated_at: string
           created_by: string | null
@@ -354,6 +355,7 @@ export interface Database {
           status?: 'pending' | 'paid' | 'overdue'
           payment_method?: 'cash' | 'card' | 'mobile-money' | 'bank-transfer' | 'check' | null
           paid_at?: string | null
+          invoice_type?: 'ordinary' | 'general-consultation' | 'gynecological-consultation'
           created_at?: string
           updated_at?: string
           created_by?: string | null
@@ -368,6 +370,7 @@ export interface Database {
           status?: 'pending' | 'paid' | 'overdue'
           payment_method?: 'cash' | 'card' | 'mobile-money' | 'bank-transfer' | 'check' | null
           paid_at?: string | null
+          invoice_type?: 'ordinary' | 'general-consultation' | 'gynecological-consultation'
           created_at?: string
           updated_at?: string
           created_by?: string | null
