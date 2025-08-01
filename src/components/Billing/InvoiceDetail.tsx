@@ -328,11 +328,6 @@ export function InvoiceDetail({ invoice, onClose, onEdit, onPay }: InvoiceDetail
               <div class="info-item">
                 <span class="info-label">Date d'émission:</span> ${new Date(invoice.date).toLocaleDateString('fr-FR')}
               </div>
-              ${invoice.appointmentId ? `
-                <div class="info-item">
-                  <span class="info-label">Rendez-vous:</span> ${invoice.appointmentId}
-                </div>
-              ` : ''}
               <div class="info-item">
                 <span class="info-label">Statut:</span> 
                 <span class="status-badge status-${invoice.status}">${getStatusLabel(invoice.status)}</span>
@@ -496,12 +491,6 @@ export function InvoiceDetail({ invoice, onClose, onEdit, onPay }: InvoiceDetail
                   <span className="text-sm font-medium text-gray-700">Date d'émission:</span>
                   <p className="text-gray-900">{new Date(invoice.date).toLocaleDateString('fr-FR')}</p>
                 </div>
-                {invoice.appointmentId && (
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">Rendez-vous:</span>
-                    <p className="text-gray-900">{invoice.appointmentId}</p>
-                  </div>
-                )}
                 <div>
                   <span className="text-sm font-medium text-gray-700">Statut:</span>
                   <div className="mt-1">

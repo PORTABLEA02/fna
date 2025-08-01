@@ -18,7 +18,6 @@ export class InvoiceService {
       .select(`
         *,
         patient:patients(first_name, last_name, phone),
-        appointment:appointments(reason),
         invoice_items(*)
       `)
       .order('created_at', { ascending: false });
@@ -41,7 +40,6 @@ export class InvoiceService {
       .select(`
         *,
         patient:patients(first_name, last_name, phone, email, address),
-        appointment:appointments(reason),
         invoice_items(*),
         payments(*)
       `)
@@ -69,7 +67,7 @@ export class InvoiceService {
     console.log('🔍 InvoiceService.create() - Utilisateur actuel:', user?.id);
     
     // Générer un ID de facture
-    const invoiceId = invoiceData.id || await this.generateInvoiceId();
+    const invoiceId = await this.generateInvoiceId();
     console.log('🔍 InvoiceService.create() - ID de facture généré:', invoiceId);
     
     // Créer la facture
@@ -222,7 +220,7 @@ export class InvoiceService {
     let nextNumber = 1;
     if (data && data.length > 0) {
       const lastId = data[0].id;
-      const lastNumber = parseInt(lastId.split('-')[3]) || 0;
+      const lastNumber = parseInt(lastId.slice(-3)) || 0;
       nextNumber = lastNumber + 1;
     }
 

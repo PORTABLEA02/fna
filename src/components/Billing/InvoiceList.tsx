@@ -398,11 +398,6 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
                     <div className="text-sm font-medium text-gray-900">
                       {invoice.total.toLocaleString()} FCFA
                     </div>
-                    {invoice.payment_method && (
-                      <div className="text-sm text-gray-500">
-                        {getPaymentMethodLabel(invoice.payment_method)}
-                      </div>
-                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(invoice.status)}`}>

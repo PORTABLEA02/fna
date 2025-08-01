@@ -45,7 +45,6 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
   const [formData, setFormData] = useState({
     patient_id: invoice?.patient_id || '',
     date: invoice?.date || new Date().toISOString().split('T')[0],
-    appointment_id: invoice?.appointment_id || '',
     status: invoice?.status || 'pending',
     tax: invoice?.tax || 0
   });
@@ -238,7 +237,7 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
           <div className="bg-blue-50 rounded-lg p-4">
             <h3 className="font-medium text-blue-800 mb-4">Informations Générales</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Patient *
@@ -269,20 +268,6 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
                   value={formData.date}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Numéro de RDV
-                </label>
-                <input
-                  type="text"
-                  name="appointment_id"
-                  value={formData.appointment_id}
-                  onChange={handleChange}
-                  placeholder="Optionnel"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>

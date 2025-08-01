@@ -333,7 +333,6 @@ export interface Database {
         Row: {
           id: string
           patient_id: string
-          appointment_id: string | null
           date: string
           subtotal: number
           tax: number
@@ -348,7 +347,6 @@ export interface Database {
         Insert: {
           id?: string
           patient_id: string
-          appointment_id?: string | null
           date: string
           subtotal?: number
           tax?: number
@@ -363,7 +361,6 @@ export interface Database {
         Update: {
           id?: string
           patient_id?: string
-          appointment_id?: string | null
           date?: string
           subtotal?: number
           tax?: number

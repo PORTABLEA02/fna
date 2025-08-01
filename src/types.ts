@@ -106,7 +106,6 @@ export interface StockMovement {
 export interface Invoice {
   id: string;
   patientId: string;
-  appointmentId?: string;
   date: string;
   subtotal: number;
   tax: number;
