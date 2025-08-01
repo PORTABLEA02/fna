@@ -46,7 +46,8 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
     patient_id: invoice?.patient_id || '',
     date: invoice?.date || new Date().toISOString().split('T')[0],
     status: invoice?.status || 'pending',
-    tax: invoice?.tax || 0
+    tax: invoice?.tax || 0,
+    invoice_type: invoice?.invoice_type || 'ordinary'
   });
 
   const [items, setItems] = useState<Omit<InvoiceItem, 'id' | 'invoice_id' | 'created_at'>[]>(
@@ -67,6 +68,13 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Types de factures disponibles
+  const INVOICE_TYPES = [
+    { value: 'ordinary', label: 'Ordinaire' },
+    { value: 'general-consultation', label: 'Consultation générale' },
+    { value: 'gynecological-consultation', label: 'Consultation gynécologique' }
+  ];
 
   React.useEffect(() => {
     loadData();
@@ -114,7 +122,8 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
       items: items,
       subtotal,
       total,
-      consultationType
+      consultationType,
+      invoiceType: formData.invoice_type
     });
   };
 
@@ -237,7 +246,26 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
           <div className="bg-blue-50 rounded-lg p-4">
             <h3 className="font-medium text-blue-800 mb-4">Informations Générales</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Type de facture *
+                </label>
+                <select
+                  name="invoice_type"
+                  value={formData.invoice_type}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {INVOICE_TYPES.map(type => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Patient *
@@ -629,6 +657,7 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
             <div className="bg-blue-50 rounded-lg p-4">
               <h3 className="font-medium text-blue-800 mb-2">Résumé de la Facture</h3>
               <div className="text-sm text-blue-700 space-y-1">
+                <p><strong>Type:</strong> {INVOICE_TYPES.find(t => t.value === formData.invoice_type)?.label}</p>
                 <p><strong>Patient:</strong> {selectedPatient?.first_name} {selectedPatient?.last_name}</p>
                 <p><strong>Date:</strong> {new Date(formData.date).toLocaleDateString('fr-FR')}</p>
                 <p><strong>Éléments:</strong> {items.length} élément{items.length > 1 ? 's' : ''}</p>
