@@ -100,8 +100,68 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
   };
 
   const handlePrintInvoice = (invoice: Invoice) => {
-    // Logique d'impression
-    window.print();
+    // Créer le contenu d'impression
+    const printContent = generatePrintContent(invoice);
+    
+    // Créer une nouvelle fenêtre pour l'impression
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      alert('Veuillez autoriser les pop-ups pour imprimer la facture');
+      return;
+    }
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Attendre que le contenu soit chargé avant d'imprimer
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.onafterprint = () => {
+        printWindow.close();
+      };
+    };
+  };
+
+  const generatePrintContent = (invoice: Invoice) => {
+    const patient = getPatientInfo(invoice.patient_id);
+    const currentDate = new Date().toLocaleDateString('fr-FR');
+    const currentTime = new Date().toLocaleTimeString('fr-FR');
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Facture - ${invoice.id}</title>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+            .clinic-name { font-size: 24px; font-weight: bold; color: #2563eb; }
+            .invoice-info { margin-bottom: 20px; }
+            .total { font-size: 18px; font-weight: bold; color: #059669; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="clinic-name">CliniCare</div>
+            <p>Système de Gestion Médicale</p>
+          </div>
+          <div class="invoice-info">
+            <h2>Facture ${invoice.id}</h2>
+            <p><strong>Patient:</strong> ${patient?.first_name} ${patient?.last_name}</p>
+            <p><strong>Date:</strong> ${new Date(invoice.date).toLocaleDateString('fr-FR')}</p>
+            <p><strong>Statut:</strong> ${getStatusLabel(invoice.status)}</p>
+          </div>
+          <div class="total">
+            <p>Total: ${invoice.total.toLocaleString()} FCFA</p>
+          </div>
+          <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
+            Facture générée le ${currentDate} à ${currentTime}
+          </div>
+        </body>
+      </html>
+    `;
   };
 
   const getStatusLabel = (status: string) => {
@@ -381,13 +441,6 @@ export function InvoiceList({ onSelectInvoice, onNewInvoice, onEditInvoice, onPa
                         title="Imprimer"
                       >
                         <Printer className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteInvoice(invoice.id)}
-                        className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
-                        title="Supprimer"
-                      >
-                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </td>

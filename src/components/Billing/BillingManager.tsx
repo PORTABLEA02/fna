@@ -40,13 +40,24 @@ export function BillingManager() {
   const handleSaveInvoice = (invoiceData: Partial<Invoice>) => {
     const saveInvoice = async () => {
       try {
-        const { invoice_items, consultationType, ...invoiceInfo } = invoiceData as any;
+        const { items, consultationType, ...rest } = invoiceData as any;
+        
+        // Construire les données de facture avec seulement les colonnes valides de la base de données
+        const invoiceForDb = {
+          patient_id: rest.patient_id,
+          date: rest.date,
+          subtotal: rest.subtotal,
+          total: rest.total,
+          status: rest.status,
+          tax: rest.tax || 0,
+          appointment_id: rest.appointment_id
+        };
         
         let savedInvoice;
         if (editingInvoice) {
-          savedInvoice = await InvoiceService.update(editingInvoice.id, invoiceInfo);
+          savedInvoice = await InvoiceService.update(editingInvoice.id, invoiceForDb);
         } else {
-          savedInvoice = await InvoiceService.create(invoiceInfo, invoice_items || []);
+          savedInvoice = await InvoiceService.create(invoiceForDb, items || []);
           
           // Créer automatiquement un workflow de consultation si c'est une nouvelle facture
           if (savedInvoice && consultationType) {
@@ -55,7 +66,8 @@ export function BillingManager() {
               patient_id: savedInvoice.patient_id,
               invoice_id: savedInvoice.id,
               consultation_type: consultationType,
-              status: 'payment-pending'
+              status: 'payment-pending',
+              created_by: savedInvoice.created_by || ''
             });
             console.log('✅ BillingManager.handleSaveInvoice() - Workflow de consultation créé');
           }

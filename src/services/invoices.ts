@@ -60,7 +60,7 @@ export class InvoiceService {
 
   // Créer une nouvelle facture
   static async create(
-    invoiceData: Omit<InvoiceInsert, 'id'>, 
+    invoiceData: InvoiceInsert, 
     items: Omit<InvoiceItemInsert, 'invoice_id'>[]
   ): Promise<Invoice> {
     console.log('🔍 InvoiceService.create() - Création d\'une nouvelle facture:', invoiceData);
@@ -69,7 +69,7 @@ export class InvoiceService {
     console.log('🔍 InvoiceService.create() - Utilisateur actuel:', user?.id);
     
     // Générer un ID de facture
-    const invoiceId = await this.generateInvoiceId();
+    const invoiceId = invoiceData.id || await this.generateInvoiceId();
     console.log('🔍 InvoiceService.create() - ID de facture généré:', invoiceId);
     
     // Créer la facture

@@ -346,7 +346,7 @@ export interface Database {
           created_by: string | null
         }
         Insert: {
-          id: string
+          id?: string
           patient_id: string
           appointment_id?: string | null
           date: string

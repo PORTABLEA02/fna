@@ -20,6 +20,7 @@ import { AppointmentService } from './services/appointments';
 import { Patient } from './types';
 
 function Dashboard() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [showPatientForm, setShowPatientForm] = useState(false);

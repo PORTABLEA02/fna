@@ -101,7 +101,7 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
     e.preventDefault();
     
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-    const total = subtotal + formData.tax;
+    const total = subtotal + (formData.tax || 0);
     
     // Déterminer le type de consultation basé sur les services facturés
     const consultationType = items.some(item => 
@@ -112,7 +112,7 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
     
     onSave({
       ...formData,
-      items,
+      items: items,
       subtotal,
       total,
       consultationType
@@ -120,7 +120,11 @@ export function InvoiceForm({ invoice, onClose, onSave }: InvoiceFormProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ 
+      ...formData, 
+      [name]: name === 'tax' ? (parseFloat(value) || 0) : value 
+    });
   };
 
   const handleItemChange = (field: keyof InvoiceItem, value: string | number) => {
